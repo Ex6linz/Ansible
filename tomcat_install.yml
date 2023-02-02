@@ -2,7 +2,7 @@
 - hosts: all
   gather_facts: yes
   vars:
-    tomcat_src: "/usr/share/ttsi_application/tomcat9"
+    tomcat_src: "/usr/share/ttsi_application/tomcat9/apache-tomcat-9.0.71"
     tomcat_dest: "var/lib/"
   tasks:
     
