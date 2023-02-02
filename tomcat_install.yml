@@ -1,0 +1,55 @@
+
+- hosts: all
+  gather_facts: yes
+
+
+  tasks:
+    
+    - name: Update
+      apt:
+        update_cache: yes
+    
+    - name: Add User Tomcat
+      user:
+        name: tomcat
+    
+    - name: Add group Tomcat
+      group:
+        name: tomcat
+
+    - name: Install Java
+      apt:
+        name: "{{packages}}"
+        state: present
+      vars:
+       packages:
+         - openjdk-11-jdk
+    
+    - name: Create Tomcat Directory
+      file:
+        path: /usr/share/ttsi_application/tomcat9
+        owner: tomcat
+        group: tomcat
+        mode: 755
+        recurse: yes
+
+    - name: Download & unarchive Tomcat
+      unarchive:
+        src: https://downloads.apache.org/tomcat/tomcat-9/v9.0.71/bin/apache-tomcat-9.0.71.tar.gz
+        dest: /usr/share/ttsi_application/tomcat9
+        remote_src: yes
+        extra_opts: [--strip-components=1]
+
+    - name: Copy Tomcat service from local to remote
+      copy:
+        src: /usr/pietrasza/tomcat9.service
+        dest: /etc/systemd/system/
+        mode: 0755
+
+    - name: Start and Enable Tomcat 9 on sever
+      systemd:
+        name: tomcat9
+        state: started
+        daemon_reload: true
+
+
